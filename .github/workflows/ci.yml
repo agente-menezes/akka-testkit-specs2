@@ -8,13 +8,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: [adopt@1.11]
         scala: ['2.13', '3']
         include:
           - scala: '2.13'
             scala-version: 2.13.18
+            java-version: adopt@1.11
           - scala: '3'
             scala-version: 3.3.8
+            # Scala 3.8+ requires JDK 17 or later to compile
+            java-version: openjdk@1.17
 
     steps:
       - name: Checkout repository
@@ -23,7 +25,7 @@ jobs:
       - name: Set up Scala
         uses: olafurpg/setup-scala@v14
         with:
-          java-version: ${{ matrix.jdk }}
+          java-version: ${{ matrix.java-version }}
 
       - name: Compile
         run: sbt coverage "++${{ matrix.scala-version }} compile"
